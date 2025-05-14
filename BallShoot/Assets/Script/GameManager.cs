@@ -1,17 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("BALL SETTINGS")]
     public GameObject[] Balls;
     public GameObject FirePoint;
-    public float BallForce;
+    [SerializeField] private float BallForce;
     int ActiveBallIndex;
+
+    [Header("LEVEL SETTINGS")]
+    [SerializeField] private int CurrentBallCount;
+    [SerializeField] private int BallTargetCount;
+    int EnteredBallCount;
+    public Slider LevelSlider;
+    public TextMeshProUGUI BallsLeft_Text;
+
 
     void Start()
     {
-
+        LevelSlider.maxValue = BallTargetCount;
+        BallsLeft_Text.text = CurrentBallCount.ToString();
     }
 
     void Update()

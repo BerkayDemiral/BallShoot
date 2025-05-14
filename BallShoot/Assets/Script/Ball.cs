@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
+    public GameManager _GameManager;
     Rigidbody rb;
 
     private void Start()
@@ -24,6 +25,7 @@ public class Ball : MonoBehaviour
             //parc
             //number update
             //Slider
+            _GameManager.BallEntered();
         }
         else if (other.CompareTag("LowerObject"))
         {
@@ -32,6 +34,7 @@ public class Ball : MonoBehaviour
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             gameObject.SetActive(false);
+            _GameManager.BallMissed();
         }
     }
 }

@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -26,10 +24,45 @@ public class GameManager : MonoBehaviour
         BallsLeft_Text.text = CurrentBallCount.ToString();
     }
 
+    public void BallEntered()
+    {
+        EnteredBallCount++;
+        LevelSlider.value = EnteredBallCount;
+
+
+        if (EnteredBallCount == BallTargetCount)
+        {
+            Debug.Log("Kazandin");
+        }
+        if (CurrentBallCount == 0 && EnteredBallCount != BallTargetCount)
+        {
+            Debug.Log("Kaybettin");
+        }
+        if ((CurrentBallCount + EnteredBallCount) < BallTargetCount)
+        {
+            Debug.Log("Kaybettin");
+        }
+
+    }
+
+    public void BallMissed()
+    {
+        if (CurrentBallCount == 0)
+        {
+            Debug.Log("Kaybettin");
+        }
+        if ((CurrentBallCount + EnteredBallCount) < BallTargetCount)
+        {
+            Debug.Log("Kaybettin");
+        }
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.T))
         {
+            CurrentBallCount--;
+            BallsLeft_Text.text = CurrentBallCount.ToString();
             Balls[ActiveBallIndex].transform.SetPositionAndRotation(FirePoint.transform.position, FirePoint.transform.rotation);
             Balls[ActiveBallIndex].SetActive(true);
             Balls[ActiveBallIndex].GetComponent<Rigidbody>().AddForce(Balls[ActiveBallIndex].transform.TransformDirection(90, 90, 0) * BallForce, ForceMode.Force);
@@ -39,6 +72,5 @@ public class GameManager : MonoBehaviour
             else
                 ActiveBallIndex++;
         }
-
     }
 }

@@ -358,6 +358,7 @@
 "Assets/Script/Ball.cs"
 "Assets/Script/CylinderController.cs"
 "Assets/Script/GameManager.cs"
+"Assets/Script/MainMenuManager.cs"
 "Assets/Script/PlatformController.cs"
 -langversion:9.0
 /deterministic

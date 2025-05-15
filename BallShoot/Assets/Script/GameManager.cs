@@ -1,6 +1,8 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,6 +19,11 @@ public class GameManager : MonoBehaviour
     public Slider LevelSlider;
     public TextMeshProUGUI BallsLeft_Text;
 
+    [Header("UI SETTINGS")]
+    public GameObject[] Panels;
+    public TextMeshProUGUI StarCount;
+    public TextMeshProUGUI WinLevelCount;
+    public TextMeshProUGUI LoseLevelCount;
 
     void Start()
     {
@@ -32,15 +39,21 @@ public class GameManager : MonoBehaviour
 
         if (EnteredBallCount == BallTargetCount)
         {
-            Debug.Log("Kazandin");
+            PlayerPrefs.SetInt("Level", SceneManager.GetActiveScene().buildIndex + 1);
+            PlayerPrefs.SetInt("Star", PlayerPrefs.GetInt("Star") + 15);
+            StarCount.text = PlayerPrefs.GetInt("Star").ToString();
+            WinLevelCount.text = "Level: " + SceneManager.GetActiveScene().name;
+            Panels[1].SetActive(true);
         }
         if (CurrentBallCount == 0 && EnteredBallCount != BallTargetCount)
         {
-            Debug.Log("Kaybettin");
+            LoseLevelCount.text = "Level: " + SceneManager.GetActiveScene().name;
+            Panels[2].SetActive(true);
         }
         if ((CurrentBallCount + EnteredBallCount) < BallTargetCount)
         {
-            Debug.Log("Kaybettin");
+            LoseLevelCount.text = "Level: " + SceneManager.GetActiveScene().name;
+            Panels[2].SetActive(true);
         }
 
     }
@@ -49,11 +62,13 @@ public class GameManager : MonoBehaviour
     {
         if (CurrentBallCount == 0)
         {
-            Debug.Log("Kaybettin");
+            LoseLevelCount.text = "Level: " + SceneManager.GetActiveScene().name;
+            Panels[2].SetActive(true);
         }
         if ((CurrentBallCount + EnteredBallCount) < BallTargetCount)
         {
-            Debug.Log("Kaybettin");
+            LoseLevelCount.text = "Level: " + SceneManager.GetActiveScene().name;
+            Panels[2].SetActive(true);
         }
     }
 
@@ -71,6 +86,37 @@ public class GameManager : MonoBehaviour
                 ActiveBallIndex = 0;
             else
                 ActiveBallIndex++;
+        }
+    }
+
+    public void PauseGame()
+    {
+        Panels[0].SetActive(true);
+        Time.timeScale = 0;
+    }
+
+    public void PanelButtonAction(string ButtonAction)
+    {
+        switch (ButtonAction)
+        {
+            case "Resume":
+                Time.timeScale = 1;
+                Panels[0].SetActive(false);
+                break;
+            case "Quit":
+                Application.Quit();
+                break;
+            case "Settings":
+                //Im just coding the game ^_^
+                break;
+            case "Retry":
+                Time.timeScale = 1;
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                break;
+            case "Next":
+                Time.timeScale = 1;
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+                break;
         }
     }
 }

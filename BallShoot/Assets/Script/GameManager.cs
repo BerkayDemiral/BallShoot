@@ -1,4 +1,5 @@
-using TMPro;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,6 +12,12 @@ public class GameManager : MonoBehaviour
     public GameObject FirePoint;
     [SerializeField] private float BallForce;
     int ActiveBallIndex;
+    public Animator _Cannon;
+    public ParticleSystem ShootBallEfect;
+    public ParticleSystem[] BallEfects;
+    int ActiveBallEfectIndex;
+    public AudioSource[] BallSounds;
+    int ActiveBallSoundIndex;
 
     [Header("LEVEL SETTINGS")]
     [SerializeField] private int CurrentBallCount;
@@ -25,20 +32,47 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI WinLevelCount;
     public TextMeshProUGUI LoseLevelCount;
 
+    [Header("OTHER SETTINGS")]
+    public Renderer TransparentBucket;
+    float BucketStartValue;
+    float BucketStepValue;
+    [SerializeField] private AudioSource[] OtherSounds;
+
     void Start()
     {
+        ActiveBallEfectIndex = 0;
+        ActiveBallSoundIndex = 0;
+
+        BucketStartValue = .5f;
+        BucketStepValue = .25f / BallTargetCount;
+
         LevelSlider.maxValue = BallTargetCount;
         BallsLeft_Text.text = CurrentBallCount.ToString();
+
     }
+
+
+
 
     public void BallEntered()
     {
         EnteredBallCount++;
         LevelSlider.value = EnteredBallCount;
 
+        BucketStartValue -= BucketStepValue;
+        TransparentBucket.material.SetTextureScale("_MainTex", new Vector2(1f, BucketStartValue));
+
+        BallSounds[ActiveBallSoundIndex].Play();
+        ActiveBallSoundIndex++;
+
+        if (ActiveBallSoundIndex == BallSounds.Length - 1)
+        {
+            ActiveBallSoundIndex = 0;
+        }
 
         if (EnteredBallCount == BallTargetCount)
         {
+            OtherSounds[0].Play();
             PlayerPrefs.SetInt("Level", SceneManager.GetActiveScene().buildIndex + 1);
             PlayerPrefs.SetInt("Star", PlayerPrefs.GetInt("Star") + 15);
             StarCount.text = PlayerPrefs.GetInt("Star").ToString();
@@ -47,26 +81,29 @@ public class GameManager : MonoBehaviour
         }
         if (CurrentBallCount == 0 && EnteredBallCount != BallTargetCount)
         {
+            OtherSounds[1].Play();
             LoseLevelCount.text = "Level: " + SceneManager.GetActiveScene().name;
             Panels[2].SetActive(true);
         }
         if ((CurrentBallCount + EnteredBallCount) < BallTargetCount)
         {
+            OtherSounds[1].Play();
             LoseLevelCount.text = "Level: " + SceneManager.GetActiveScene().name;
             Panels[2].SetActive(true);
         }
-
     }
 
     public void BallMissed()
     {
         if (CurrentBallCount == 0)
         {
+            OtherSounds[1].Play();
             LoseLevelCount.text = "Level: " + SceneManager.GetActiveScene().name;
             Panels[2].SetActive(true);
         }
         if ((CurrentBallCount + EnteredBallCount) < BallTargetCount)
         {
+            OtherSounds[1].Play();
             LoseLevelCount.text = "Level: " + SceneManager.GetActiveScene().name;
             Panels[2].SetActive(true);
         }
@@ -78,6 +115,9 @@ public class GameManager : MonoBehaviour
         {
             CurrentBallCount--;
             BallsLeft_Text.text = CurrentBallCount.ToString();
+            _Cannon.Play("Cannon");
+            ShootBallEfect.Play();
+            OtherSounds[2].Play();
             Balls[ActiveBallIndex].transform.SetPositionAndRotation(FirePoint.transform.position, FirePoint.transform.rotation);
             Balls[ActiveBallIndex].SetActive(true);
             Balls[ActiveBallIndex].GetComponent<Rigidbody>().AddForce(Balls[ActiveBallIndex].transform.TransformDirection(90, 90, 0) * BallForce, ForceMode.Force);
@@ -118,5 +158,21 @@ public class GameManager : MonoBehaviour
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
                 break;
         }
+    }
+
+    public void ParcEfect(Vector3 _Position, Color _Color)
+    {
+        BallEfects[ActiveBallEfectIndex].transform.position = _Position;
+        var main = BallEfects[ActiveBallEfectIndex].main;
+        main.startColor = _Color;
+
+        BallEfects[ActiveBallEfectIndex].gameObject.SetActive(true);
+        ActiveBallEfectIndex++;
+
+        if (ActiveBallEfectIndex == BallEfects.Length - 1)
+        {
+            ActiveBallEfectIndex = 0;
+        }
+
     }
 }

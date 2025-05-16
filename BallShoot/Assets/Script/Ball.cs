@@ -17,18 +17,22 @@ public class Ball : MonoBehaviour
        
         if (other.CompareTag("Bucket"))
         {
+            Renderer _color = GetComponent<Renderer>();
+            _GameManager.ParcEfect(gameObject.transform.position, _color.material.color);
+
             gameObject.transform.localPosition = Vector3.zero;
             gameObject.transform.localRotation = Quaternion.Euler(Vector3.zero);
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             gameObject.SetActive(false);
-            //parc
-            //number update
-            //Slider
             _GameManager.BallEntered();
         }
         else if (other.CompareTag("LowerObject"))
         {
+            Renderer _color = GetComponent<Renderer>();
+
+            _GameManager.ParcEfect(gameObject.transform.position, _color.material.color);
+
             gameObject.transform.localPosition = Vector3.zero;
             gameObject.transform.localRotation = Quaternion.Euler(Vector3.zero);
             rb.velocity = Vector3.zero;

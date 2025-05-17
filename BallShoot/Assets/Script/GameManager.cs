@@ -204,4 +204,24 @@ public class GameManager : MonoBehaviour
         LoseLevelCount.text = "Level: " + LevelName;
         Panels[2].SetActive(true);
     }
+
+    public void ShootBall() //For Mobile
+    {
+        if (Time.timeScale != 0)
+        {
+                CurrentBallCount--;
+                BallsLeft_Text.text = CurrentBallCount.ToString();
+                _Cannon.Play("Cannon");
+                ShootBallEfect.Play();
+                OtherSounds[2].Play();
+                Balls[ActiveBallIndex].transform.SetPositionAndRotation(FirePoint.transform.position, FirePoint.transform.rotation);
+                Balls[ActiveBallIndex].SetActive(true);
+                Balls[ActiveBallIndex].GetComponent<Rigidbody>().AddForce(Balls[ActiveBallIndex].transform.TransformDirection(90, 90, 0) * BallForce, ForceMode.Force);
+
+                if (Balls.Length - 1 == ActiveBallIndex)
+                    ActiveBallIndex = 0;
+                else
+                    ActiveBallIndex++;
+        }
+    }
 }
